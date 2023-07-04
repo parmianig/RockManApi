@@ -1,0 +1,81 @@
+openapi: '3.0.0'
+info:
+  title: 'RockMan API'
+  version: '0.0.1'
+  description: Get and launch Postman Collections
+  contact:
+    name: PGP
+    email: primo.parmiani@alten.it
+servers:
+  - url: http://localhost:3000
+    description: RockMan API
+paths:
+  /collections:
+    get: 
+      operationId: allCollections
+      summary: returns a complete list of available collection  names
+      description: get all available collections
+      tags:
+        - collections
+      responses:
+        '200':
+          description: List of collections
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                $ref: '#/components/schemas/collection'
+        404:
+          description: No method found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    CollectionId:
+      description: The unique identifier of a collection
+      type: string
+    Collection:
+      type: object
+      required:
+        - id
+        - name
+        - type
+      properties:
+        id:
+          $ref: '#/components/schemas/CollectionId'
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - collectionVariables
+            - environmentVariables
+            - globalVariables
+            - inputParams
+            - output
+        description:
+          type: string
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          description: A human readable error message
+          type: string
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+security:
+  - ApiKey: []
